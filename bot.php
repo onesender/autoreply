@@ -2,7 +2,7 @@
 /**
  * Bot Class
  * 
- * @version 1.0.1
+ * @version 1.0.2
  * @license Premium License
  * 
  * (c) 2024 M Ali <onesender.id@gmail.com>
@@ -10,7 +10,7 @@
 
 final class Bot {
     
-    const VERSION = '1.0.1';
+    const VERSION = '1.0.2';
 
     private static $instance;
 
@@ -122,6 +122,10 @@ final class Bot {
     }
 
     private function getGeminiResult() {
+        if (empty($this->geminiApiKey)) {
+            throw new Exception('Api key tidak valid');
+        }
+
         $systemPrompt = sprintf($this->prompt, implode(', ', array_keys($this->inputIntent)));
 
         $system = [
