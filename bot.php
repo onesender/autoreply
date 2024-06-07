@@ -2,7 +2,7 @@
 /**
  * Bot Class
  * 
- * @version 1.0.0
+ * @version 1.0.1
  * @license Premium License
  * 
  * (c) 2024 M Ali <onesender.id@gmail.com>
@@ -10,7 +10,7 @@
 
 final class Bot {
     
-    const VERSION = '1.0.0';
+    const VERSION = '1.0.1';
 
     private static $instance;
 
@@ -42,7 +42,7 @@ final class Bot {
     }
 
     private function getPrompt() {
-        return "You are dialogflow agent. Extract intent from text. Intent options are: %s. Output in structured json format: {intent: ''}. snake case. Input and output is bahasa indonesia.";
+        return "You are dialogflow agent. Extract intent from text. Intent options are: %s. Output in structured json format: {intent: ''}. snake case. Input and output is bahasa indonesia. If not matched any intent response will be {intent: null}";
     }
 
     public function setPrompt($prompt) {
@@ -50,12 +50,12 @@ final class Bot {
     }
 
     public function on($param) {
-        $this->tmpInputText = $param;
+        $this->tmpInputText = strtolower($param);
         return $this;
     }
 
     public function onIntent($param) {
-        $this->tmpInputIntent = $param;
+        $this->tmpInputIntent = $this->toSnakeCase($param);
         return $this;
     }
 
@@ -200,6 +200,15 @@ final class Bot {
     private function isValidWebhook($request) {
         $isOutbox = $request['is_from_me'] ?? false;
         return !$isOutbox && !empty($this->from) && !empty($this->text);
+    }
+
+    private function toSnakeCase($input) {
+        $input = str_replace(' ', '_', $input);
+        $input = preg_replace_callback('/([a-z])([A-Z])/', function($matches) {
+            return strtolower($matches[1]) . '_' . strtolower($matches[2]);
+        }, $input);
+        
+        return strtolower($input);
     }
 }
 
