@@ -61,7 +61,7 @@ final class Bot {
 
     public function reply($answer) {
         if (!empty($this->tmpInputText)) {
-            $key = md5($this->tmpInputText);
+            $key = md5(strtolower($this->tmpInputText));
             $this->inputText[$key] = $answer;
         } elseif (!empty($this->tmpInputIntent)) {
             $this->inputIntent[$this->tmpInputIntent] = $answer;
